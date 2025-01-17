@@ -27,6 +27,8 @@ async def process_redis_queue(redis: Redis) -> None:
                 await kafka_producer_service.send_batch_messages(
                     [KafkaMessage(key=event.get("event_type"), value=event) for event in events]
                 )
+            if settings.test_mode:
+                break
             await asyncio.sleep(settings.kafka_batch_sleep)
     finally:
         await kafka_producer_service.stop()

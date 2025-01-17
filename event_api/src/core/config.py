@@ -35,6 +35,9 @@ class AppSettings(BaseSettings):
     jwt_algorithm: str = Field(default="RS256")
     jwt_public_key_path: str = Field(default="/app/keys/example_public_key.pem")
 
+    # Другие настройки
+    test_mode: bool = Field(default=False)
+
     model_config = SettingsConfigDict(
         env_file=DOTENV_PATH,
         env_file_encoding="utf-8",
