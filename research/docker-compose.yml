@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  clickhouse:
+    image: yandex/clickhouse-server:latest
+    container_name: clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 10s
+      retries: 3
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  vertica:
+    image: vertica/vertica-ce:latest
+    container_name: vertica
+    environment:
+      ACCEPT_EULA: "yes"
+      VERTICA_PASSWORD: password123
+    ports:
+      - "15433:5433"  # Порт Vertica
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/vertica/bin/vsql -h 127.0.0.1 -U dbadmin -c 'SELECT 1'"]
+      interval: 10s
+      retries: 3
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+  
+  postgres:
+    image: postgres:15
+    container_name: postgres_service
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: metrics_db
+    ports:
+      - "5440:5432"
