@@ -6,14 +6,7 @@ import vertica_python
 from clickhouse_driver import Client
 
 
-def generate_data_and_create_tables():
-    csv_path = "test_data.csv"
-    if not os.path.exists(csv_path):
-        with open(csv_path, mode="w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["id", "name", "value"])
-            for i in range(1, 10000000):
-                writer.writerow([i, f"Name_{i}", i * 10])
+def create_tables():
     create_vertica_table()
     create_clickhouse_table()
     create_postgres_table()
