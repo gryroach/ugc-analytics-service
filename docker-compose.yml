@@ -136,9 +136,49 @@ services:
       kafka-topics.sh --create --topic user_events --replication-factor 3 --partitions 3 --if-not-exists --bootstrap-server kafka-0:9092;
       echo 'Topics created';
       "
-
+  
+  clickhouse-server:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-server
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 10s
+      retries: 3
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - clickhouse_server_data:/var/lib/clickhouse
+      - ./clickhouse/init-clickhouse.sql:/docker-entrypoint-initdb.d/init-clickhouse.sql
+  
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: cadvisor
+    hostname: cadvisor
+    restart: always
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    ports:
+      - 8081:8080
+    volumes:
+      - /:/rootfs:ro
+      - /dev/disk/:/dev/disk:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /cgroup:/cgroup:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /etc/localtime:/etc/localtime:ro
 
 volumes:
   kafka_0_data:
   kafka_1_data:
   kafka_2_data:
+  clickhouse_server_data:
+  kafka-connect-data:
