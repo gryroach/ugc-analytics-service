@@ -19,8 +19,6 @@ services:
       - ./.env
     expose:
       - "8000"
-    ports:
-      - "8001:8000"
     volumes:
       - ./event_api/src:/app/src
     depends_on:
