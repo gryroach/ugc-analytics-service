@@ -6,13 +6,13 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 import psycopg2
 
-from scripts.generate_data import generate_data_and_create_tables
+from scripts.generate_data import create_tables
 from scripts.loader import load_data
 from scripts.writer import run_aggregation_queries
 
 
 def main(duration, workers, batches):
-    generate_data_and_create_tables()
+    create_tables()
     for size in batches:
         # Vertica
         threading.Thread(
